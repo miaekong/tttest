@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+<div th:replace="~{fragments/top :: menu}"></div>
+
+<div class="container">
+    <div class="p-4 bg-light rounded">
+        <h1 class="mb-2">🎬 MovieManager</h1>
+        <p class="mb-3">관리자 영화 CRUD + 사용자 조회 + 리뷰/평점까지 한 번에.</p>
+
+        <div class="d-flex gap-2">
+            <a class="btn btn-primary" th:href="@{/movies}">영화 보러가기</a>
+            <a class="btn btn-outline-secondary" th:href="@{/login}" th:if="${session.loginNick == null}">로그인</a>
+            <a class="btn btn-outline-dark" th:href="@{/admin}" th:if="${session.loginRole == 'ADMIN'}">관리자 대시보드</a>
+        </div>
+
+        <hr class="my-4">
+        <div class="small text-muted">
+            기본 계정: admin/1234 (ADMIN), user/1234 (USER)
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

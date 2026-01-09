@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+<div th:replace="~{fragments/top :: menu}"></div>
+
+<div class="container">
+    <div class="row g-3">
+        <div class="col-md-4">
+            <img th:if="${movie.posterUrl != null}" th:src="${movie.posterUrl}" class="img-fluid rounded" alt="poster">
+            <div th:if="${movie.posterUrl == null}" class="p-5 bg-light rounded text-center text-muted">No Poster</div>
+
+            <div class="mt-3 d-grid gap-2" th:if="${session.loginRole == 'ADMIN'}">
+                <a class="btn btn-outline-primary" th:href="@{|/admin/movies/${movie.id}/edit|}">수정</a>
+                <form th:action="@{|/admin/movies/${movie.id}/delete|}" method="post">
+                    <button class="btn btn-outline-danger w-100" type="submit"
+                            onclick="return confirm('정말 삭제하시겠습니까?');">삭제</button>
+                </form>
+            </div>
+        </div>
+
+        <div class="col-md-8">
+            <h3 class="mb-1" th:text="${movie.title}">title</h3>
+            <div class="small text-muted mb-3">
+                <span th:text="${movie.genre}">genre</span>
+                · <span th:text="${movie.releaseDate}">date</span>
+                · <span th:text="${movie.runningTime}">0</span>분
+                · <b th:text="${movie.rating}">rating</b>
+                <span class="badge bg-success" th:if="${movie.featured}">추천</span>
+                <span class="badge bg-secondary" th:if="${movie.archived}">종료</span>
+            </div>
+
+            <div class="mb-2">
+                감독: <b th:text="${movie.director}">director</b>
+            </div>
+            <div class="mb-3">
+                배우: <span th:text="${movie.actors}">actors</span>
+            </div>
+
+            <div class="card mb-4">
+                <div class="card-header">시놉시스</div>
+                <div class="card-body">
+                    <div th:text="${movie.synopsis}">synopsis</div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">리뷰/평점</div>
+                <div class="card-body">
+
+                    <div class="alert alert-info" th:if="${!isLogin}">
+                        리뷰 작성은 로그인 후 가능합니다. <a th:href="@{/login}">로그인</a>
+                    </div>
+
+                    <form th:if="${isLogin}" th:action="@{|/movies/${movie.id}/reviews|}" method="post" th:object="${reviewForm}" class="row g-2 mb-3">
+                        <div class="col-md-2">
+                            <select class="form-select" th:field="*{score}">
+                                <option value="1">1</option>
+                                <option value="2">2</option>
+                                <option value="3" selected>3</option>
+                                <option value="4">4</option>
+                                <option value="5">5</option>
+                            </select>
+                        </div>
+                        <div class="col-md-8">
+                            <input class="form-control" th:field="*{content}" placeholder="리뷰를 남겨주세요 (최대 500자)">
+                        </div>
+                        <div class="col-md-2">
+                            <button class="btn btn-primary w-100" type="submit">등록</button>
+                        </div>
+                    </form>
+
+                    <div th:if="${#lists.isEmpty(reviews)}" class="text-muted">아직 리뷰가 없습니다.</div>
+
+                    <div class="list-group" th:if="${!#lists.isEmpty(reviews)}">
+                        <div class="list-group-item" th:each="r : ${reviews}">
+                            <div class="d-flex justify-content-between">
+                                <div>
+                                    <b th:text="${r.nickname}">nick</b>
+                                    <span class="badge bg-warning text-dark" th:text="${r.score}">5</span>
+                                </div>
+                                <div class="small text-muted" th:text="${r.createdAt}">time</div>
+                            </div>
+                            <div class="mt-2" th:text="${r.content}">content</div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+</body>
+</html>
